@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <arg name="n" default="4"/>
+    <arg name="monitor" default="true"/>
+    <arg name="radius" value=".15"/>
+    
+   <node name="mrs_monitor" pkg="mrs_monitor" type="mrs_monitor" respawn="true" output="screen"
+         if="$(arg monitor)"/>
+       
+    <!-- virtual robot just to make plans -->
+
+    <include file="$(find mrs_monitor)/launch/spawn.launch">
+        <arg name="robot" value="virtual_robot"/>
+        <arg name="x" value="100"/>
+        <arg name="y" value="100"/>
+        <arg name="theta" value="0"/>
+        <arg name="radius" value="$(eval 1.1*arg('radius'))"/>
+    </include>
+    
+    
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 0)">
+        <arg name="robot" value="robot1"/>
+        <arg name="R" value="255"/>
+        <arg name="G" value="0"/>
+        <arg name="B" value="0"/>
+        <arg name="x" value="0"/>
+        <arg name="y" value="0"/>
+        <arg name="theta" value="0"/>     
+        <arg name="radius" value="$(arg radius)"/>
+    </include>
+    
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 1)">
+        <arg name="robot" value="robot2"/>
+        <arg name="R" value="0"/>
+        <arg name="G" value="255"/>
+        <arg name="B" value="0"/>
+        <arg name="x" value="4"/>
+        <arg name="y" value="2.3"/>
+        <arg name="theta" value="1.5"/>     
+        <arg name="radius" value="$(arg radius)"/>
+    </include>
+    
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 2)">
+        <arg name="robot" value="robot3"/>
+        <arg name="R" value="0"/>
+        <arg name="G" value="0"/>
+        <arg name="B" value="255"/>
+        <arg name="x" value="-3.3"/>
+        <arg name="y" value="-3.3"/>
+        <arg name="radius" value="$(arg radius)"/>
+    </include>
+    
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 3)">
+        <arg name="robot" value="robot4"/>
+        <arg name="R" value="255"/>
+        <arg name="G" value="255"/>
+        <arg name="B" value="0"/>
+        <arg name="x" value="8.7"/>
+        <arg name="y" value="-3.3"/>
+        <arg name="theta" value="-1.5"/>
+    </include>
+    
+</launch>

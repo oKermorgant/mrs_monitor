@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robot" default="robot1"/>
+    <arg name="R" default="255"/>
+    <arg name="G" default="0"/>
+    <arg name="B" default="0"/>
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="theta" default="0"/>
+    <arg name="radius" default=".15"/>
+    
+    <arg name="R01" value="$(eval R/255.)"/>
+    <arg name="G01" value="$(eval G/255.)"/>
+    <arg name="B01" value="$(eval B/255.)"/>   
+    
+    
+    <group ns="$(arg robot)">
+        <param name="robot_description" command="$(find xacro)/xacro $(find mrs_monitor)/urdf/robot.xacro prefix:=$(arg robot)/ radius:=$(arg radius)  R:=$(arg R01) G:=$(arg G01) B:=$(arg B01)"/>
+        
+<!--         no need for a robot state publisher for this 1-link robot -->
+<!--         <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/> -->
+        
+
+        <node pkg="map_simulator" type="spawn" name="spawn">
+            <param name="zero_joints" value="true"/>
+            <param name="static_tf_odom" value="true"/>
+            <param name="radius" value="$(arg radius)"/>
+            <param name="x" value="$(arg x)"/>
+            <param name="y" value="$(arg y)"/>
+            <param name="theta" value="$(arg theta)"/>
+            <param name="force_scanner" value="false"/>
+            <param name="robot_color" value="$(arg R) $(arg G) $(arg B)"/>
+        </node>
+        
+        <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+            <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+
+            <rosparam file="$(find mrs_monitor)/param/costmap_common.yaml" command="load" ns="global_costmap"  subst_value="true"/>
+            <rosparam file="$(find mrs_monitor)/param/costmap_common.yaml" command="load" ns="local_costmap"  subst_value="true"/>
+            <rosparam file="$(find mrs_monitor)/param/local_costmap.yaml" command="load"  subst_value="true"/>
+            <rosparam file="$(find mrs_monitor)/param/global_costmap.yaml" command="load" subst_value="true"/>
+            <rosparam file="$(find mrs_monitor)/param/move_base.yaml" command="load" />
+            <rosparam file="$(find mrs_monitor)/param/dwa_local_planner.yaml" command="load" />
+            <remap from="map" to="/map"/>
+    </node>
+        
+    </group>
+</launch>

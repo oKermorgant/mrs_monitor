@@ -1,0 +1,5 @@
+# get the state of a robot
+string robot_name
+---
+geometry_msgs/Pose2D pose
+float64 seconds_to_goal

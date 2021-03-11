@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    
+<xacro:arg name="prefix" default="robot/"/>
+<xacro:arg name="R" default="1"/>
+<xacro:arg name="G" default="0"/>
+<xacro:arg name="B" default="0"/>
+<xacro:arg name="radius" default="0.2"/>
+
+<xacro:property name="radius" default="$(arg radius)"/>
+<xacro:property name="height" default="${radius*0.7}"/>
+
+<material name="color">
+    <color rgba="$(arg R) $(arg G) $(arg B) 1"/>
+</material>
+<material name="black">
+    <color rgba="0 0 0 1"/>
+</material>
+  
+<link name="$(arg prefix)base_link">
+<visual>
+    <origin xyz="0 0 ${height/2}"/>
+    <geometry>
+    <cylinder length="${height}" radius="${radius}"/>
+    </geometry>
+    <material name="color"/>
+</visual>
+
+<visual>
+    <origin xyz="${radius/2} 0 ${height}"/>
+    <geometry>
+    <box size="${radius} ${radius/7} ${radius/7}"/>
+    </geometry>
+    <material name="black"/>
+</visual>
+</link>
+  
+</robot>

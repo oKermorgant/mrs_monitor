@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="map" default="$(find map_simulator)/example/house.yaml"/>
+    <arg name="speed" default="1"/>
+    
+    <group if="$(eval arg('speed') > 1)">
+        <param name="/use_sim_time" value="true"/>
+        <node pkg="mrs_monitor" type="sim_time" name="sim_time">
+            <param name="speed" value="$(arg speed)"/>
+        </node>
+    </group>
+    
+    <node pkg="map_simulator" type="simulator" name="simulator" output="screen">
+        <param name="map" value="$(arg map)"/>
+        <param name="rate" value="20"/>
+        <param name="max_width" value="1200"/>
+        <param name="max_height" value="800"/>
+        <param name="display" value="false"/>
+    </node>
+    
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map)"/>
+    
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find mrs_monitor)/launch/sim.rviz"/> 
+    
+</launch>

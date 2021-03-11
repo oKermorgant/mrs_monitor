@@ -1,0 +1,7 @@
+# estimate how long it would take to travel between two poses with some maximum velocity
+geometry_msgs/Pose2D start
+geometry_msgs/Pose2D goal
+float64 v_max
+float64 w_max
+---
+float64 seconds

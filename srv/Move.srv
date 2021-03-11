@@ -1,0 +1,6 @@
+# Request a robot to move to a goal
+string robot_name
+geometry_msgs/Pose2D goal
+float64 v_max
+float64 w_max
+---

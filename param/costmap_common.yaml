@@ -1,0 +1,9 @@
+obstacle_range: 3.0
+raytrace_range: 3.5
+
+robot_radius: $(arg radius)
+
+inflation_radius: 1.0
+cost_scaling_factor: 3.0
+
+map_type: costmap
