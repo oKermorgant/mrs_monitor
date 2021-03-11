@@ -84,7 +84,7 @@ private:
     }
     else if(status == Status::MOVING)
     {
-      last_goal.position.z = -100;
+      last_goal.position.z = 100;
       // stop listening to useless messages
       status = Status::WAITING;
       remaining_path_sub.shutdown();

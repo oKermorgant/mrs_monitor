@@ -61,4 +61,46 @@
         <arg name="theta" value="-1.5"/>
     </include>
     
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 4)">
+        <arg name="robot" value="robot5"/>
+        <arg name="R" value="255"/>
+        <arg name="G" value="0"/>
+        <arg name="B" value="255"/>
+    </include>
+    
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 5)">
+        <arg name="robot" value="robot6"/>
+        <arg name="R" value="0"/>
+        <arg name="G" value="255"/>
+        <arg name="B" value="255"/>
+    </include>
+    
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 6)">
+        <arg name="robot" value="robot7"/>
+        <arg name="R" value="100"/>
+        <arg name="G" value="200"/>
+        <arg name="B" value="100"/>
+    </include>
+    
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 7)">
+        <arg name="robot" value="robot8"/>
+        <arg name="R" value="200"/>
+        <arg name="G" value="100"/>
+        <arg name="B" value="100"/>
+    </include>
+    
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 8)">
+        <arg name="robot" value="robot9"/>
+        <arg name="R" value="100"/>
+        <arg name="G" value="100"/>
+        <arg name="B" value="200"/>
+    </include>
+    
+    <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 9)">
+        <arg name="robot" value="robot10"/>
+        <arg name="R" value="100"/>
+        <arg name="G" value="100"/>
+        <arg name="B" value="100"/>
+    </include>
+    
 </launch>

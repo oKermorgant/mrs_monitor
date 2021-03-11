@@ -18,7 +18,7 @@ Robot::Robot(ros::NodeHandle &nh, std::string name) : nh(nh), name(name), frame(
   max_vel_srv = nh.serviceClient<dynamic_reconfigure::Reconfigure>(move_base_ns + "DWAPlannerROS/set_parameters");
 
   // dummy last_goal
-  last_goal.position.z = -100;
+  last_goal.position.z = 100;
   last_goal.orientation.w = 1;
 }
 

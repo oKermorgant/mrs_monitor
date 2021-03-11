@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
   // robot basic interface
   std::vector<Robot_IO> robots;
-  for(int i = 1; i < 10; ++i)
+  for(int i = 1; i <= 10; ++i)
   {
     std::string name("robot" + std::to_string(i));
     if(io.exists(name))
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   std::cout << "Found " << robots.size() << " robots" << std::endl;
 
   ros::Rate rate(0.2);
-  ros::Rate wait(1);
+  ros::Rate wait(0.5);
 
   while(ros::ok())
   {
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 
     // if any available, generate a random goal
     if(std::any_of(robots.begin(), robots.end(), [](const auto &robot)
-    {return robot.seconds_to_goal < 1;}))
+    {return robot.seconds_to_goal < 0;}))
     {
       geometry_msgs::Pose2D goal;
       do {
