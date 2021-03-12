@@ -20,8 +20,6 @@ private:
 
   Robot* getRobot(const std::string &name);
 
-  void setupVirtualRobot();
-
   ros::NodeHandle nh;
   std::vector<std::unique_ptr<Robot>> fleet;
   tf2_ros::Buffer tf_buffer;
@@ -34,7 +32,7 @@ private:
   bool moveCallback(MoveRequest &req, MoveResponse &);
   bool statusCallback(StatusRequest &req, StatusResponse &res);  
 
-  // planning service of virtual robot - used for all estimations
+  // global planning service - used for all estimations
   ros::ServiceClient plan_srv;
 
 };

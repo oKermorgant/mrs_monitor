@@ -2,11 +2,11 @@ local_costmap:
   global_frame: $(arg robot)/odom
   robot_base_frame: $(arg robot)/base_link
 
-  update_frequency: 10.0
-  publish_frequency: 10.0
+  update_frequency: $(arg controller_frequency)
+  publish_frequency: $(arg controller_frequency)
   transform_tolerance: 0.5  
 
-  static_map: true
+  static_map: false
   rolling_window: true
   width: 3
   height: 3

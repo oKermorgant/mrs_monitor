@@ -9,6 +9,9 @@
     <arg name="theta" default="0"/>
     <arg name="radius" default=".15"/>
     
+    <arg name="controller_frequency" default="10."/>
+    <arg name="use_move_base" default="false"/>
+    
     <arg name="R01" value="$(eval R/255.)"/>
     <arg name="G01" value="$(eval G/255.)"/>
     <arg name="B01" value="$(eval B/255.)"/>   
@@ -32,7 +35,15 @@
             <param name="robot_color" value="$(arg R) $(arg G) $(arg B)"/>
         </node>
         
-        <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <!-- Run lighter control if not use_move_base -->
+        <node pkg="mrs_monitor" type="mrs_control" name="controller" unless="$(arg use_move_base)">
+            <rosparam file="$(find mrs_monitor)/param/costmap_common.yaml" command="load" ns="local_costmap"  subst_value="true"/>
+            <rosparam file="$(find mrs_monitor)/param/local_costmap.yaml" command="load"  subst_value="true"/>
+            <rosparam file="$(find mrs_monitor)/param/dwa_local_planner.yaml" command="load" />
+        </node>
+        
+        <!-- Or run the full move_base stack -->
+        <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" if="$(arg use_move_base)">
             <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
 
             <rosparam file="$(find mrs_monitor)/param/costmap_common.yaml" command="load" ns="global_costmap"  subst_value="true"/>

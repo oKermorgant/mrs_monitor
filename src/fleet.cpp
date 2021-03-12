@@ -14,46 +14,7 @@ Fleet::Fleet() : nh("~"), tf_listener(tf_buffer)
 
   goals_pub = nh.advertise<geometry_msgs::PoseArray>("last_goals", 10);
 
-  plan_srv = nh.serviceClient<nav_msgs::GetPlan>("/virtual_robot/move_base/make_plan");
-  //  setupVirtualRobot();
-
-}
-
-void Fleet::setupVirtualRobot()
-{
-  // maybe later, include the virtual robot in the fleet manager
-  // would give access to make_plan without having to run move_base for the virtual robot
-
-  /*
-
-
-
-  // publish some odometry for the virtual robot
-  auto virtual_odom_pub = nh.advertise<nav_msgs::Odometry>("/virtual_robot/odom", 10);
-  auto virtual_odom = nav_msgs::Odometry();
-  virtual_odom.header.frame_id = "virtual_robot/odom";
-  virtual_odom.child_frame_id = "virtual_robot/base_link";
-
-  ros::Rate rate(10);
-  for(int i = 0; i < 5; ++i)
-  {
-    virtual_odom.header.stamp = ros::Time::now();
-    virtual_odom_pub.publish(virtual_odom);
-    ros::spinOnce();
-    rate.sleep();
-  }
-
-  geometry_msgs::TransformStamped transform;
-  transform.header.stamp = ros::Time::now();
-  transform.transform.rotation.w = 1;
-
-  transform.header.frame_id = "map";
-  transform.child_frame_id = "virtual_robot/odom";
-  static_tf_br.sendTransform(transform);
-
-  transform.header.frame_id = "virtual_robot/odom";
-  transform.child_frame_id = "virtual_robot/base_link";
-  static_tf_br.sendTransform(transform);*/
+  plan_srv = nh.serviceClient<nav_msgs::GetPlan>("/mrs_planner/planner/make_plan");
 }
 
 Robot* Fleet::getRobot(const std::string &name)
@@ -76,7 +37,7 @@ bool Fleet::estimateCallback(EstimateRequest &req, EstimateResponse &res)
 {  
   if(!plan_srv.exists())
   {
-    ROS_WARN("Please spawn a virtual_robot in order to estimate plans");
+    ROS_WARN("Please run the global planner in order to estimate plans");
     return false;
   }
 
