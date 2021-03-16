@@ -3,7 +3,8 @@ Panels:
     Help Height: 87
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
+      Expanded:
+        - /Last goals1
       Splitter Ratio: 0.5
     Tree Height: 677
   - Class: rviz/Selection
@@ -81,15 +82,15 @@ Visualization Manager:
       Axes Length: 0.30000001192092896
       Axes Radius: 0.009999999776482582
       Class: rviz/PoseArray
-      Color: 255; 85; 255
+      Color: 0; 0; 0
       Enabled: true
       Head Length: 0.07000000029802322
-      Head Radius: 0.029999999329447746
+      Head Radius: 0.15000000596046448
       Name: Last goals
       Queue Size: 10
-      Shaft Length: 0.23000000417232513
-      Shaft Radius: 0.009999999776482582
-      Shape: Arrow (Flat)
+      Shaft Length: 0.30000001192092896
+      Shaft Radius: 0.07000000029802322
+      Shape: Arrow (3D)
       Topic: /mrs_monitor/last_goals
       Unreliable: false
       Value: true
@@ -605,7 +606,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 20.820096969604492
+      Distance: 21.471012115478516
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -621,9 +622,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3247965574264526
+      Pitch: 1.1947966814041138
       Target Frame: <Fixed Frame>
-      Yaw: 4.688571929931641
+      Yaw: 4.7335734367370605
     Saved: ~
 Window Geometry:
   Displays:

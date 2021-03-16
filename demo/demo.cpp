@@ -4,21 +4,61 @@
 
 // to communicate easily
 #include <mrs_monitor/monitor_io.h>
+#include <nav_msgs/GetMap.h>
 
 using namespace mrs_monitor;
 using namespace std::chrono_literals;
 
-inline double rand(double min, double max)
+struct RandCoord
 {
-  return min + (max-min)*((double)rand()/RAND_MAX);
-}
+  inline double rand(double min, double max) const
+  {
+    return min + (max-min)*((double)std::rand()/RAND_MAX);
+  }
+
+  RandCoord()
+  {
+    // get map dimensions
+    ros::NodeHandle nh;
+    ros::ServiceClient map(nh.serviceClient<nav_msgs::GetMap>("/static_map"));
+
+    nav_msgs::GetMap full_info;
+    map.call(full_info);
+    const auto &info(full_info.response.map.info);
+    const double x0(info.origin.position.x);
+    const double y0(info.origin.position.y);
+    const double width(info.width*info.resolution);
+    const double height(info.height*info.resolution);
+
+    const double margin(0.3);
+
+    xm = x0+margin;
+    xM = x0+width-margin;
+    ym = y0+margin;
+    yM = y0+height-margin;
+
+    std::cout << "Will generate " << xm << " <= x <= " << xM << " / " << ym << " <= y <= " << yM << std::endl;
+    srand(time(nullptr));
+  }
+
+  geometry_msgs::Pose2D operator()() const
+  {
+    static geometry_msgs::Pose2D pose;
+    pose.x = rand(xm,xM);
+    pose.y = rand(ym, yM);
+    pose.theta = rand(-M_PI, M_PI);
+    return pose;
+  }
+  double xm, xM, ym, yM;
+};
+
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "demo_cpp");
   ros::NodeHandle nh;
 
-  srand(time(nullptr));
+  RandCoord rand_coord;
 
   Monitor_IO io(nh);
 
@@ -53,7 +93,7 @@ int main(int argc, char** argv)
     {
       geometry_msgs::Pose2D goal;
       do {
-        goal = pose2D(rand(-4.6, 10.6), rand(-6.4, 4.42), rand(-M_PI, M_PI));
+        goal = rand_coord();
       } while(!io.validGoal(goal));
 
       std::cout << "New goal @ " << goal.x << ", " << goal.y << std::endl;

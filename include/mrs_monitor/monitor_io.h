@@ -10,17 +10,6 @@
 namespace mrs_monitor
 {
 
-
-// helper to generate a geometry_msgs::Pose2D
-inline geometry_msgs::Pose2D pose2D(double x, double y, double theta)
-{
-  geometry_msgs::Pose2D pose;
-  pose.x = x;
-  pose.y = y;
-  pose.theta = theta;
-  return pose;
-}
-
 // basic robot IO
 
 struct Robot_IO
