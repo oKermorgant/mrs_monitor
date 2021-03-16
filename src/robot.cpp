@@ -40,6 +40,7 @@ bool Robot::trackGoal(const geometry_msgs::Pose2D &pose, double vmax, double wma
 
   updateMaxVel(vmax, wmax);
   convert(pose, last_goal);
+  last_goal.position.z = 0;
 
   if(track_pub.getNumSubscribers())
   {
@@ -53,7 +54,6 @@ bool Robot::trackGoal(const geometry_msgs::Pose2D &pose, double vmax, double wma
     goal.header.stamp = ros::Time::now();
     goal_pub.publish(goal);
   }
-
 
   // monitor this goal
   status = Status::MOVING;
