@@ -27,8 +27,8 @@ Robot::Robot(ros::NodeHandle &nh, std::string name) : nh(nh), name(name), frame(
 void Robot::updateMaxVel(double vmax, double wmax)
 {
   max_vel_config.request.config.doubles.clear();
-  writeParamUpdate(max_vel_config.request.config.doubles, "max_vel_x", vmax, this->vmax_inv);
-  writeParamUpdate(max_vel_config.request.config.doubles, "max_vel_theta", wmax, this->wmax_inv);
+  writeParamUpdate(max_vel_config.request.config.doubles, "max_vel_trans", vmax, this->vmax_inv);
+  writeParamUpdate(max_vel_config.request.config.doubles, "max_vel_rot", wmax, this->wmax_inv);
   if(max_vel_config.request.config.doubles.size())
     max_vel_srv.call(max_vel_config);
 }

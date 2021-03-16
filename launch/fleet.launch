@@ -14,7 +14,7 @@
    
     <!-- A single global planner for all robots -->
    <node name="global_costmap" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 map global_costmap 100"/>
-   <node name="mrs_planner" pkg="mrs_monitor" type="mrs_planner">
+   <node name="mrs_planner" pkg="mrs_monitor" type="mrs_planner" respawn="true">
         <rosparam file="$(find mrs_monitor)/param/costmap_common.yaml" command="load" ns="global_costmap"  subst_value="true"/>
         <rosparam file="$(find mrs_monitor)/param/global_costmap.yaml" command="load"  subst_value="true"/>
         <rosparam file="$(find mrs_monitor)/param/planner.yaml" command="load" subst_value="true"/>

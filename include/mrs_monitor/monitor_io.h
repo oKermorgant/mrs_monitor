@@ -93,8 +93,8 @@ public:
 
   inline bool validGoal(const geometry_msgs::Pose2D &goal)
   {
-    static geometry_msgs::Pose2D start;
-    return estimate(start, goal, 1, 1) >= 0.;
+    //static geometry_msgs::Pose2D start;
+    return estimate(goal, goal, 1, 1) >= 0.;
   }
 
 private:
