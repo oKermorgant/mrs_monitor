@@ -29,6 +29,7 @@ Robot* Fleet::getRobot(const std::string &name)
   // add this robot
   ROS_INFO("Monitoring new robot: %s", name.c_str());
   fleet.emplace_back(std::make_unique<Robot>(nh, name));
+  last_paths[fleet.back().get()] = {};
 
   return fleet.back().get();
 }
@@ -49,6 +50,13 @@ bool Fleet::estimateCallback(EstimateRequest &req, EstimateResponse &res)
   {
     // estimate travel time for this path
     res.seconds = travelTime(last_plan.response.plan.poses, req.v_max, req.w_max);
+
+    // register if it was the path from one robot pose
+    for(auto &[robot,path]: last_paths)
+    {
+      if(robot->timeTo(last_plan.request.start) < 0.01)
+        path = last_plan.response.plan;
+    }
   }
   else
     res.seconds = -1;
@@ -59,11 +67,21 @@ bool Fleet::moveCallback(MoveRequest &req, MoveResponse &)
 {
   auto robot = getRobot(req.robot_name);
 
+
   // find this path before asking to track it
-  robot->getPose(last_plan.request.start);
   convert(req.goal, last_plan.request.goal.pose);
-  plan_srv.call(last_plan);
-  robot->setPath(last_plan.response.plan);
+
+  if(robot->timeTo(last_plan.request.goal) < 0.01)
+  {
+    // we have already found this path
+    robot->setPath(last_paths[robot]);
+  }
+  else
+  {
+    robot->getPose(last_plan.request.start);
+    plan_srv.call(last_plan);
+    robot->setPath(last_plan.response.plan);
+  }
 
   if(robot->trackGoal(req.goal, req.v_max, req.w_max))
   {

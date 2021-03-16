@@ -40,6 +40,8 @@ public:
     getPose(cur_pose);
   }
 
+  double timeTo(const PoseStamped &pose);
+
   inline void setPath(const nav_msgs::Path &path)
   {
     remaining_path = path;

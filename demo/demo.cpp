@@ -32,6 +32,8 @@ int main(int argc, char** argv)
   }
   std::cout << "Found " << robots.size() << " robots" << std::endl;
 
+  const auto min_avail_robot = robots.size() < 4 ? 1 : sqrt(robots.size());
+
   ros::Rate rate(0.2);
 
   while(ros::ok())
@@ -46,8 +48,8 @@ int main(int argc, char** argv)
     }
 
     // if any available, generate a random goal
-    if(std::any_of(robots.begin(), robots.end(), [](const auto &robot)
-    {return robot.seconds_to_goal < 0;}))
+    if(std::count_if(robots.begin(), robots.end(), [](const auto &robot)
+    {return robot.seconds_to_goal < 0;}) >= min_avail_robot)
     {
       geometry_msgs::Pose2D goal;
       do {

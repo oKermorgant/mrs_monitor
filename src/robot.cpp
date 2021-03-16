@@ -66,6 +66,12 @@ bool Robot::trackGoal(const geometry_msgs::Pose2D &pose, double vmax, double wma
   return true;
 }
 
+double Robot::timeTo(const PoseStamped &pose)
+{
+  updateCurrentPose();
+  return travelTime(cur_pose, pose, vmax_inv, wmax_inv);
+}
+
 double Robot::timeToGoal()
 {
   if(status == Status::WAITING)
@@ -73,10 +79,7 @@ double Robot::timeToGoal()
 
   double t(travelTime(remaining_path.poses, vmax_inv, wmax_inv));
   if(!remaining_path.poses.empty())
-  {
-    updateCurrentPose();
-    t += travelTime(cur_pose, remaining_path.poses.front(), vmax_inv, wmax_inv);
-  }
+    t += timeTo(remaining_path.poses.front());
   return t;
 }
 

@@ -23,6 +23,7 @@ private:
 
   ros::NodeHandle nh;
   std::vector<std::unique_ptr<Robot>> fleet;
+  std::map<Robot*, nav_msgs::Path> last_paths;
   tf2_ros::Buffer tf_buffer;
   tf2_ros::TransformListener tf_listener;
   ros::Publisher goals_pub;
