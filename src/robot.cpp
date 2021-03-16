@@ -39,19 +39,17 @@ bool Robot::trackGoal(const geometry_msgs::Pose2D &pose, double vmax, double wma
     return false;
 
   updateMaxVel(vmax, wmax);
+  convert(pose, last_goal);
 
   if(track_pub.getNumSubscribers())
   {
-    std::cout << "Tracking goal with track_pub";
     track_pub.publish(remaining_path);
   }
   else
   {
-    std::cout << "Tracking goal with goal_pub";
     // request eg move_base to find a path + track it
     static geometry_msgs::PoseStamped goal = [](){geometry_msgs::PoseStamped goal;goal.header.frame_id = "map";return goal;}();
-    convert(pose, goal.pose);
-    last_goal = goal.pose;
+    goal.pose = last_goal;
     goal.header.stamp = ros::Time::now();
     goal_pub.publish(goal);
   }
