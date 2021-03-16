@@ -1,19 +1,25 @@
 <?xml version="1.0"?>
 <launch>
     
-    <arg name="n" default="1"/>
-    <arg name="monitor" default="true"/>
+    <arg name="n" default="0"/>
     <arg name="radius" default=".15"/>
     <arg name="use_move_base" default="false"/>
     
-   <node name="mrs_monitor" pkg="mrs_monitor" type="mrs_monitor" respawn="true" output="screen"
-         if="$(arg monitor)"/>
+    <arg name="robot" value="costmap"/>
+    
+    <!-- purge logs -->
+    <param name="purged" command="rosclean purge -y"/>
+    
+   <node name="mrs_monitor" pkg="mrs_monitor" type="mrs_monitor" respawn="true" output="screen"/>
    
     <!-- A single global planner for all robots -->
+   <node name="global_costmap" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 map global_costmap 100"/>
    <node name="mrs_planner" pkg="mrs_monitor" type="mrs_planner">
-       <rosparam file="$(find mrs_monitor)/param/global_planner.yaml" command="load" subst_value="true"/>
-       <rosparam file="$(find mrs_monitor)/param/costmap_common.yaml" command="load" ns="global_costmap"  subst_value="true"/>
+        <rosparam file="$(find mrs_monitor)/param/costmap_common.yaml" command="load" ns="global_costmap"  subst_value="true"/>
+        <rosparam file="$(find mrs_monitor)/param/global_costmap.yaml" command="load"  subst_value="true"/>
+        <rosparam file="$(find mrs_monitor)/param/planner.yaml" command="load" subst_value="true"/>
    </node>   
+   
     
     <include file="$(find mrs_monitor)/launch/spawn.launch" if="$(eval arg('n') > 0)">
         <arg name="robot" value="robot1"/>

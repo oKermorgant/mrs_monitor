@@ -1,0 +1,3 @@
+GlobalPlanner:
+    publish_potential: False
+    use_dijkstra: True

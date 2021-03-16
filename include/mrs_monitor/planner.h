@@ -10,12 +10,12 @@ namespace mrs_monitor
 class Planner
 {
 public:
-  Planner();
+  Planner(tf2_ros::Buffer &buffer);
 private:
   ros::NodeHandle nh;
 
-  costmap_2d::Costmap2D costmap;
-  costmap_2d::Costmap2D buildCostMap();
+  costmap_2d::Costmap2DROS costmap;
+
 
   global_planner::GlobalPlanner planner;
 };

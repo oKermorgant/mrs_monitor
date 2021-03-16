@@ -3,7 +3,7 @@
 namespace mrs_monitor
 {
 
-double travelTime(const PoseStamped &prev, const PoseStamped &next, double vmax, double wmax)
+double travelTime(const PoseStamped &prev, const PoseStamped &next, double vmax_inv, double wmax_inv)
 {
   // just take Euclidean + angular time estimates
 
@@ -17,10 +17,10 @@ double travelTime(const PoseStamped &prev, const PoseStamped &next, double vmax,
   const auto c2(next.pose.orientation.w);
   const auto s2(next.pose.orientation.z);
 
-  return sqrt(dx*dx + dy*dy)/vmax + 2*abs(atan2(s1*c2-c1*s2, c1*c2+s1*s2))/wmax;
+  return sqrt(dx*dx + dy*dy)*vmax_inv + 2*abs(atan2(s1*c2-c1*s2, c1*c2+s1*s2))*wmax_inv;
 }
 
-double travelTime(const std::vector<PoseStamped> &path, double vmax, double wmax)
+double travelTime(const std::vector<PoseStamped> &path, double vmax_inv, double wmax_inv)
 {
   if(path.size() < 2)
     return 0;
@@ -30,7 +30,7 @@ double travelTime(const std::vector<PoseStamped> &path, double vmax, double wmax
   for(size_t i = 1; i < path.size(); ++i)
   {
     auto &cur(path[i]);
-    time += travelTime(prev, cur, vmax, wmax);
+    time += travelTime(prev, cur, vmax_inv, wmax_inv);
     prev = cur;
   }
   return time;

@@ -14,7 +14,8 @@ Fleet::Fleet() : nh("~"), tf_listener(tf_buffer)
 
   goals_pub = nh.advertise<geometry_msgs::PoseArray>("last_goals", 10);
 
-  plan_srv = nh.serviceClient<nav_msgs::GetPlan>("/mrs_planner/planner/make_plan");
+  plan_srv = nh.serviceClient<nav_msgs::GetPlan>("/mrs_planner/GlobalPlanner/make_plan");
+  last_plan.request.start.header.frame_id = last_plan.request.goal.header.frame_id = "map";
 }
 
 Robot* Fleet::getRobot(const std::string &name)
@@ -32,7 +33,6 @@ Robot* Fleet::getRobot(const std::string &name)
   return fleet.back().get();
 }
 
-
 bool Fleet::estimateCallback(EstimateRequest &req, EstimateResponse &res)
 {  
   if(!plan_srv.exists())
@@ -42,19 +42,13 @@ bool Fleet::estimateCallback(EstimateRequest &req, EstimateResponse &res)
   }
 
   // get path
-  static nav_msgs::GetPlan plan_IO = []()
-  {nav_msgs::GetPlan plan;
-    plan.request.start.header.frame_id = plan.request.goal.header.frame_id = "map";
-    return plan;
-  }();
+  convert(req.start, last_plan.request.start.pose);
+  convert(req.goal, last_plan.request.goal.pose);
 
-  convert(req.start, plan_IO.request.start.pose);
-  convert(req.goal, plan_IO.request.goal.pose);
-
-  if(plan_srv.call(plan_IO) && plan_IO.response.plan.poses.size())
+  if(plan_srv.call(last_plan) && last_plan.response.plan.poses.size())
   {
     // estimate travel time for this path
-    res.seconds = travelTime(plan_IO.response.plan.poses, req.v_max, req.w_max);
+    res.seconds = travelTime(last_plan.response.plan.poses, req.v_max, req.w_max);
   }
   else
     res.seconds = -1;
@@ -65,9 +59,15 @@ bool Fleet::moveCallback(MoveRequest &req, MoveResponse &)
 {
   auto robot = getRobot(req.robot_name);
 
-  if(robot->move(req.goal, req.v_max, req.w_max))
+  // find this path before asking to track it
+  robot->getPose(last_plan.request.start);
+  convert(req.goal, last_plan.request.goal.pose);
+  plan_srv.call(last_plan);
+  robot->setPath(last_plan.response.plan);
+
+  if(robot->trackGoal(req.goal, req.v_max, req.w_max))
   {
-    // also update goals
+    // also update all robot goals for display
     static geometry_msgs::PoseArray poses;
     poses.poses.clear();
     poses.header.frame_id = "map";
@@ -89,3 +89,4 @@ bool Fleet::statusCallback(StatusRequest &req, StatusResponse &res)
   res.seconds_to_goal = robot->timeToGoal();
   return true;
 }
+

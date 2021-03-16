@@ -7,6 +7,7 @@
 #include <mrs_monitor/Estimate.h>
 #include <mrs_monitor/Move.h>
 #include <mrs_monitor/Status.h>
+#include <nav_msgs/GetPlan.h>
 
 namespace mrs_monitor
 {
@@ -32,8 +33,9 @@ private:
   bool moveCallback(MoveRequest &req, MoveResponse &);
   bool statusCallback(StatusRequest &req, StatusResponse &res);  
 
-  // global planning service - used for all estimations
+  // global planning service - used for all estimations  
   ros::ServiceClient plan_srv;
+  nav_msgs::GetPlan last_plan;
 
 };
 

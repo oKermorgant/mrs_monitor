@@ -1,10 +1,12 @@
 // basic includes
 #include <ros/ros.h>
+#include <thread>
 
 // to communicate easily
 #include <mrs_monitor/monitor_io.h>
 
 using namespace mrs_monitor;
+using namespace std::chrono_literals;
 
 inline double rand(double min, double max)
 {
@@ -31,7 +33,6 @@ int main(int argc, char** argv)
   std::cout << "Found " << robots.size() << " robots" << std::endl;
 
   ros::Rate rate(0.2);
-  ros::Rate wait(0.5);
 
   while(ros::ok())
   {
@@ -64,7 +65,7 @@ int main(int argc, char** argv)
         if(robot.seconds_to_goal < 0)
         {
           auto estimate = io.estimate(robot, goal);
-          wait.sleep();
+          std::this_thread::sleep_for(20ms);
           if(estimate < smallest_time || smallest_time < 0)
           {
             smallest_time = estimate;

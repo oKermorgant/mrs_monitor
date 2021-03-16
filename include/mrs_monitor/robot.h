@@ -31,11 +31,21 @@ public:
     tf_buffer = &buffer;
   }
 
-  bool move(const Pose2D &pose, double vmax, double wmax);
+  bool trackGoal(const Pose2D &pose, double vmax, double wmax);
 
   bool getPose(Pose2D &pose);
+  void getPose(PoseStamped &pose) const;
+  inline void updateCurrentPose()
+  {
+    getPose(cur_pose);
+  }
 
-  Pose lastGoal() const
+  inline void setPath(const nav_msgs::Path &path)
+  {
+    remaining_path = path;
+  }
+
+  inline Pose lastGoal() const
   {
     return last_goal;
   }
@@ -45,14 +55,16 @@ public:
 private:
 
   // for now these are loaded once and for all in constructor
-  double vmax = 1;
-  double wmax = 0.1;
+  double vmax_inv = 1;
+  double wmax_inv = 0.1;
   ros::ServiceClient max_vel_srv;
   static dynamic_reconfigure::Reconfigure max_vel_config;
 
-  void updateMaxVel(double vmax, double wmax);
+  void updateMaxVel(double vmax_inv, double wmax_inv);
+  void publishRemainingPath();
 
   geometry_msgs::Pose last_goal;
+  geometry_msgs::PoseStamped cur_pose;
   ros::NodeHandle &nh;
   std::string name;
   std::string frame;
@@ -61,46 +73,21 @@ private:
 
   static tf2_ros::Buffer *tf_buffer;
 
+  ros::Subscriber status_sub;
+  ros::Publisher goal_pub, remaining_path_pub, track_pub;
+  nav_msgs::Path remaining_path;
 
-  ros::Subscriber remaining_path_sub, status_sub;
-  ros::Publisher goal_pub;  
-  std::vector<PoseStamped> remaining_path;
-
-  void remainingPathCallback(const nav_msgs::PathConstPtr &path)
-  {
-    remaining_path = path->poses;
-  }
-
-  void statusCallback(const actionlib_msgs::GoalStatusArrayConstPtr &goal_status)
-  {
-    const bool moving = std::any_of(goal_status->status_list.begin(),
-                              goal_status->status_list.end(),
-                              [](const actionlib_msgs::GoalStatus &status)
-    {return status.status == status.ACTIVE;});
-
-    if(moving)
-    {
-      status = Status::MOVING;
-    }
-    else if(status == Status::MOVING)
-    {
-      last_goal.position.z = 100;
-      // stop listening to useless messages
-      status = Status::WAITING;
-      remaining_path_sub.shutdown();
-      status_sub.shutdown();
-    }
-  }
+  void statusCallback(const actionlib_msgs::GoalStatusArrayConstPtr &goal_status);
 
   template <class Doubles>
-  static void writeParamUpdate(Doubles &doubles, std::string name, double new_val, double &cur_val)
+  static void writeParamUpdate(Doubles &doubles, std::string name, double vel_max, double &vel_max_inv)
   {
-    if(new_val > 0 && new_val != cur_val)
+    if(vel_max > 0 && 1./vel_max != vel_max_inv)
     {
-      cur_val = new_val;
+      vel_max_inv = 1./vel_max;
       doubles.push_back({});
       doubles.back().name = name;
-      doubles.back().value = new_val;
+      doubles.back().value = vel_max;
     }
   }
 };

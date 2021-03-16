@@ -17,8 +17,7 @@ Monitor_IO::Monitor_IO(ros::NodeHandle &nh, std::string ns) : nh(nh)
 
 bool Monitor_IO::exists(std::string name) const
 {
-  auto plan_srv = nh.serviceClient<nav_msgs::GetPlan>("/" + name + "/move_base/make_plan");
-  return plan_srv.exists();
+  return nh.hasParam("/" + name + "/robot_description");
 }
 
 double Monitor_IO::estimate(const geometry_msgs::Pose2D &start, const geometry_msgs::Pose2D &goal,
