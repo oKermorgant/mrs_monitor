@@ -7,8 +7,8 @@
 <xacro:arg name="B" default="0"/>
 <xacro:arg name="radius" default="0.2"/>
 
-<xacro:property name="radius" default="$(arg radius)"/>
-<xacro:property name="height" default="${radius*0.7}"/>
+<xacro:property name="radius" value="$(arg radius)"/>
+<xacro:property name="height" value="${radius*0.7}"/>
 
 <material name="color">
     <color rgba="$(arg R) $(arg G) $(arg B) 1"/>
@@ -34,5 +34,4 @@
     <material name="black"/>
 </visual>
 </link>
-  
 </robot>

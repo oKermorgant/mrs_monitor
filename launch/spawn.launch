@@ -8,6 +8,7 @@
     <arg name="y" default="0"/>
     <arg name="theta" default="0"/>
     <arg name="radius" default=".15"/>
+    <arg name="zero_pose" default="false"/>
     
     <arg name="controller_frequency" default="5."/>
     <arg name="use_move_base" default="false"/>
@@ -28,15 +29,15 @@
             <param name="zero_joints" value="true"/>
             <param name="static_tf_odom" value="true"/>
             <param name="radius" value="$(arg radius)"/>
-            <param name="x" value="$(arg x)"/>
-            <param name="y" value="$(arg y)"/>
-            <param name="theta" value="$(arg theta)"/>
+            <param name="x" value="$(arg x)" unless="$(arg zero_pose)"/>
+            <param name="y" value="$(arg y)" unless="$(arg zero_pose)"/>
+            <param name="theta" value="$(arg theta)" unless="$(arg zero_pose)"/>
             <param name="force_scanner" value="false"/>
             <param name="robot_color" value="$(arg R) $(arg G) $(arg B)"/>
         </node>
         
         <!-- Run lighter control if not use_move_base -->
-        <node pkg="mrs_monitor" type="mrs_control" name="move_base" unless="$(arg use_move_base)">
+        <node pkg="mrs_monitor" type="mrs_control" name="move_base" unless="$(arg use_move_base)" output="screen">
             <rosparam file="$(find mrs_monitor)/param/costmap_common.yaml" command="load" ns="local_costmap"  subst_value="true"/>
             <rosparam file="$(find mrs_monitor)/param/local_costmap.yaml" command="load"  subst_value="true"/>
             <rosparam file="$(find mrs_monitor)/param/dwa_local_planner.yaml" command="load" subst_value="true" />

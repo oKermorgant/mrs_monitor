@@ -33,20 +33,35 @@ class Controller
 public:
   Controller();
 
+  template <class LocalPlanner>
+  void initLocalPlanner()
+  {
+    // init costmap after potentially changing params
+    costmap = std::make_unique<costmap_2d::Costmap2DROS>("local_costmap", buffer);
+
+    // init the local planner
+    local_planner = std::make_unique<LocalPlanner>();
+    local_planner->initialize("DWAPlannerROS", &buffer, costmap.get());
+  }
+
+  template <class T>
+  inline void setLocalParam(std::string name, T value)
+  {
+    priv.setParam(name, value);
+  }
+
 private:
 
   enum class Status {MOVING, DONE};
 
-  ros::NodeHandle nh;
+  ros::NodeHandle nh, priv;
   tf2_ros::Buffer buffer;
   tf2_ros::TransformListener tl;
-  costmap_2d::Costmap2DROS costmap;
-  void initCostMap();
-  void initPlanningSrv();
+  std::unique_ptr<costmap_2d::Costmap2DROS> costmap;
 
   ros::Publisher cmd_vel_pub;
   geometry_msgs::Twist cmd_vel;
-  dwa_local_planner::DWAPlannerROS dwa;
+  std::unique_ptr<nav_core::BaseLocalPlanner> local_planner;
   Status status = Status::DONE;
 
   // emulate planning from topic
@@ -58,7 +73,7 @@ private:
   ros::Subscriber plan_sub;
   inline void beginTrackingPath(const nav_msgs::Path &path)
   {
-    if(dwa.setPlan(path.poses))
+    if(local_planner->setPlan(path.poses))
     {
       status = Status::MOVING;
       timer.setPeriod(refresh_moving);
@@ -71,11 +86,6 @@ private:
   ros::Timer timer;
   ros::Duration refresh_still, refresh_moving;
 };
-
-
-
-
-
 
 }
 
