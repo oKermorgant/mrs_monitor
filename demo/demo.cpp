@@ -94,7 +94,7 @@ int main(int argc, char** argv)
       geometry_msgs::Pose2D goal;
       do {
         goal = rand_coord();
-      } while(!io.validGoal(goal));
+      } while(io.estimate(robots[0], goal) < 0);
 
       std::cout << "New goal @ " << goal.x << ", " << goal.y << std::endl;
 

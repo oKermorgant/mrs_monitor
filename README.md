@@ -8,7 +8,7 @@ All planning / control are done through the nav stack. It could be anything, as 
 
 * Robots have names and are assumed to be spawned in the corresponding namespace
 * They use {name}/base_link and {name}/odom as main links
-* They run `move_base` in their namespace
+* They run either `move_base` in their namespace, or a light-weight controller with the same interface (default).
 
 # Exposed services
 
