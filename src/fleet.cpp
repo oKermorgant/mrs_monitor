@@ -48,8 +48,8 @@ bool Fleet::estimateCallback(EstimateRequest &req, EstimateResponse &res)
 
   if(plan_srv.call(last_plan) && last_plan.response.plan.poses.size())
   {
-    // estimate travel time for this path
-    res.seconds = travelTime(last_plan.response.plan.poses, req.v_max, req.w_max);
+    // estimate travel time for this path, the function requires inverse of max vels as inputs
+    res.seconds = travelTime(last_plan.response.plan.poses, 1.0/req.v_max, 1.0/req.w_max);
 
     // register if it was the path from one robot pose
     for(auto &[robot,path]: last_paths)
